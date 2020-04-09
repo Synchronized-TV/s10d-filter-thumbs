@@ -2,7 +2,6 @@ require('@babel/register');
 require('@babel/polyfill');
 
 const { mongo } = require('json-criteria');
-const sortThumbs = require('./sort');
 
 const conditions = {
   $every (d, q) {
@@ -102,11 +101,8 @@ function convert(variables) {
 }
 
 function filter(args, items) {
-  const { where, sort, sortLimit } = args;
-  const filteredItems = Object.keys(where).length === 0 ? items : items.filter(item => mongo.test(item, convert(where)));
-  const sortedFilteredItems = sort ? sortThumbs(filteredItems, sort) : filteredItems;
-
-  return sortLimit ? sortedFilteredItems.slice(0, sortLimit) : sortedFilteredItems;
+  const { where } = args;
+  return Object.keys(where).length === 0 ? items : items.filter(item => mongo.test(item, convert(where)));
 }
 
 module.exports = filter;

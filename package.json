@@ -2,7 +2,12 @@
   "name": "s10d-filter-thumbs",
   "version": "1.0.0",
   "devDependencies": {
-    "eslint": "^5.12.1"
+    "eslint": "^6.3.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.0"
   },
   "dependencies": {
     "@babel/core": "^7.9.0",

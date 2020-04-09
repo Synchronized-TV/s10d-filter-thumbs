@@ -92,6 +92,10 @@ function getAverageScore(thumb, sort) {
 }
 
 function sortThumbs(thumbs, sort) {
+  if (!sort) {
+    return thumbs;
+  }
+
   const thumbsWithScore = injectScores(
     // Wrap jsonpath obj to work with objects having weird prototype.
     thumbs.map(thumb => JSON.parse(JSON.stringify(thumb))),
