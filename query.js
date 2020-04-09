@@ -20,7 +20,7 @@ const thumbFields = [
 ];
 
 async function query(request, videoId, args, length = 500) {
-  const { thumbsConnection: { aggregate: { count } } } = await request(THUMBS_CONNECTION, {
+  const { aggregate: { count } } = await request(THUMBS_CONNECTION, {
     where: {
       video: {
         id: videoId
@@ -43,7 +43,7 @@ async function query(request, videoId, args, length = 500) {
     })
   }));
 
-  return chunks.reduce((acc, { thumbs }) => [...acc, ...thumbs], []);
+  return chunks.reduce((acc, thumbs) => [...acc, ...thumbs], []);
 }
 
 module.exports = query;
