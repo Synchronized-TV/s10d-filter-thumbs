@@ -191,6 +191,7 @@ const VIDEO = `
   query video($id: UUID!) {
     video(where: { id: $id }) {
       id
+      title
       duration
       project { thumbsPresets { videosPath videoStartInc videoEndInc } }
     }
@@ -199,7 +200,13 @@ const VIDEO = `
 const CUE = `
   query cue($id: UUID!) {
     cue(where: { id: $id }) {
-      start end video { id project { thumbsPresets { videosPath videoStartInc videoEndInc } } }
+      start
+      end
+      video {
+        id
+        title
+        project { thumbsPresets { videosPath videoStartInc videoEndInc } }
+      }
     }
   }`;
 
