@@ -1,45 +1,98 @@
 const gql = require('graphql-tag');
 const { print } = require('graphql');
 
-const FACE_FRAGMENT = gql`
+const faceFields = [
+  'confidence',
+  'top',
+  'bottom',
+  'left',
+  'right',
+  'width',
+  'height',
+  'brightness',
+  'sharpness',
+  'roll',
+  'yaw',
+  'pitch',
+  'smile',
+  'smileConfidence',
+  'eyesOpen',
+  'eyesOpenConfidence',
+  'mouthOpen',
+  'mouthOpenConfidence',
+  'happy',
+  'happyConfidence',
+  'sad',
+  'sadConfidence',
+  'angry',
+  'angryConfidence',
+  'confused',
+  'confusedConfidence',
+  'disgusted',
+  'disgustedConfidence',
+  'surprised',
+  'surprisedConfidence',
+  'calm',
+  'calmConfidence',
+  'unknown',
+  'unknownConfidence',
+  'fear',
+  'fearConfidence'
+];
+
+const personFields = [
+  'confidence',
+  'name'
+];
+
+const labelFields = [
+  'confidence',
+  'name',
+  'top',
+  'left',
+  'bottom',
+  'right',
+  'width',
+  'height',
+  'parentsCount'
+];
+
+const textFields = [
+  'confidence',
+  'name',
+  'top',
+  'left',
+  'bottom',
+  'right',
+  'width',
+  'height'
+];
+
+const thumbFields = [
+  'start',
+  'end',
+  'url',
+  'brightness',
+  'sharpness',
+  'quality',
+  'facesCount',
+  'faces',
+  'biggestFace',
+  'secondBiggestFace',
+  'thirdBiggestFace',
+  'matches',
+  'celebrities',
+  'labels',
+  'texts',
+  ...faceFields,
+  ...personFields,
+  ...labelFields,
+  ...textFields
+];
+
+const FACE_FRAGMENT = (fields) => gql`
   fragment FaceFragment on ThumbFace {
-    id
-    confidence
-    top
-    bottom
-    left
-    right
-    width
-    height
-    brightness
-    sharpness
-    roll
-    yaw
-    pitch
-    smile
-    smileConfidence
-    eyesOpen
-    eyesOpenConfidence
-    mouthOpen
-    mouthOpenConfidence
-    happy
-    happyConfidence
-    sad
-    sadConfidence
-    angry
-    angryConfidence
-    confused
-    confusedConfidence
-    disgusted
-    disgustedConfidence
-    surprised
-    surprisedConfidence
-    calm
-    calmConfidence
-    unknown
-    unknownConfidence
-    fear
-    fearConfidence
+    id ${fields.filter(it => faceFields.includes(it)).join(' ')}
   }
 `;
 
@@ -76,54 +129,33 @@ const THIRD_BIGGEST_FACE_FRAGMENT = gql`
   }
 `;
 
-const MATCHES_FRAGMENT = gql`
+const MATCHES_FRAGMENT = (fields) => gql`
   fragment MatchesFragment on Thumb {
     matches {
-      id
-      confidence
-      name
+      id ${fields.filter(it => personFields.includes(it)).join(' ')}
     }
   }
 `;
 
-const CELEBRITIES_FRAGMENT = gql`
+const CELEBRITIES_FRAGMENT = (fields) => gql`
   fragment CelebritiesFragment on Thumb {
     celebrities {
-      id
-      confidence
-      name
+      id ${fields.filter(it => personFields.includes(it)).join(' ')}
     }
   }
 `;
-const LABELS_FRAGMENT = gql`
+const LABELS_FRAGMENT = (fields) => gql`
   fragment LabelsFragment on Thumb {
     labels {
-      id
-      confidence
-      name
-      top
-      left
-      bottom
-      right
-      width
-      height
-      parentsCount
+      id ${fields.filter(it => labelFields.includes(it)).join(' ')}
     }
   }
 `;
 
-const TEXTS_FRAGMENT = gql`
+const TEXTS_FRAGMENT = (fields) => gql`
   fragment TextsFragment on Thumb {
     texts {
-      id
-      confidence
-      name
-      top
-      left
-      bottom
-      right
-      width
-      height
+      id ${fields.filter(it => textFields.includes(it)).join(' ')}
     }
   }
 `;
@@ -160,15 +192,15 @@ function makeThumbsQuery(fields) {
       }
     }
 
-    ${usesFaces ? FACE_FRAGMENT : ''}
+    ${usesFaces ? FACE_FRAGMENT(fields) : ''}
     ${fields.includes('faces') ? FACES_FRAGMENT : ''}
     ${fields.includes('biggestFace') ? BIGGEST_FACE_FRAGMENT : ''}
     ${fields.includes('secondBiggestFace') ? SECOND_BIGGEST_FACE_FRAGMENT : ''}
     ${fields.includes('thirdBiggestFace') ? THIRD_BIGGEST_FACE_FRAGMENT : ''}
-    ${fields.includes('matches') ? MATCHES_FRAGMENT : ''}
-    ${fields.includes('celebrities') ? CELEBRITIES_FRAGMENT : ''}
-    ${fields.includes('labels') ? LABELS_FRAGMENT : ''}
-    ${fields.includes('texts') ? TEXTS_FRAGMENT : ''}
+    ${fields.includes('matches') ? MATCHES_FRAGMENT(fields) : ''}
+    ${fields.includes('celebrities') ? CELEBRITIES_FRAGMENT(fields) : ''}
+    ${fields.includes('labels') ? LABELS_FRAGMENT(fields) : ''}
+    ${fields.includes('texts') ? TEXTS_FRAGMENT(fields) : ''}
   `);
 };
 
@@ -210,6 +242,7 @@ const CUE = `
   }`;
 
 module.exports = {
+  thumbFields,
   makeThumbsQuery,
   THUMBS_CONNECTION,
   VIDEO,

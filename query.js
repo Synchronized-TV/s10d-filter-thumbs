@@ -1,24 +1,6 @@
 
 const { makeThumbsQuery, THUMBS_CONNECTION } = require('./graphql');
-const { CUE, VIDEO } = require('./graphql');
-
-const thumbFields = [
-  'start',
-  'end',
-  'url',
-  'brightness',
-  'sharpness',
-  'quality',
-  'facesCount',
-  'faces',
-  'biggestFace',
-  'secondBiggestFace',
-  'thirdBiggestFace',
-  'matches',
-  'celebrities',
-  'labels',
-  'texts'
-];
+const { CUE, VIDEO, thumbFields } = require('./graphql');
 
 async function getStartEndFromChapterIdOrVideoId({ request, ...args }) {
   if (args.chapterId) {
