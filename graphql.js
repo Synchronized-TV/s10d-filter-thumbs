@@ -1,6 +1,3 @@
-const gql = require('graphql-tag');
-const { print } = require('graphql');
-
 const faceFields = [
   'confidence',
   'top',
@@ -90,13 +87,13 @@ const thumbFields = [
   ...textFields
 ];
 
-const FACE_FRAGMENT = (fields) => gql`
+const FACE_FRAGMENT = (fields) => `
   fragment FaceFragment on ThumbFace {
     id ${fields.filter(it => faceFields.includes(it)).join(' ')}
   }
 `;
 
-const FACES_FRAGMENT = gql`
+const FACES_FRAGMENT = `
   fragment FacesFragment on Thumb {
     facesCount
     faces {
@@ -105,7 +102,7 @@ const FACES_FRAGMENT = gql`
   }
 `;
 
-const BIGGEST_FACE_FRAGMENT = gql`
+const BIGGEST_FACE_FRAGMENT = `
   fragment BiggestFaceFragment on Thumb {
     biggestFace {
       ...FaceFragment
@@ -113,7 +110,7 @@ const BIGGEST_FACE_FRAGMENT = gql`
   }
 `;
 
-const SECOND_BIGGEST_FACE_FRAGMENT = gql`
+const SECOND_BIGGEST_FACE_FRAGMENT = `
   fragment SecondBiggestFaceFragment on Thumb {
     secondBiggestFace {
       ...FaceFragment
@@ -121,7 +118,7 @@ const SECOND_BIGGEST_FACE_FRAGMENT = gql`
   }
 `;
 
-const THIRD_BIGGEST_FACE_FRAGMENT = gql`
+const THIRD_BIGGEST_FACE_FRAGMENT = `
   fragment ThirdBiggestFaceFragment on Thumb {
     thirdBiggestFace {
       ...FaceFragment
@@ -129,7 +126,7 @@ const THIRD_BIGGEST_FACE_FRAGMENT = gql`
   }
 `;
 
-const MATCHES_FRAGMENT = (fields) => gql`
+const MATCHES_FRAGMENT = (fields) => `
   fragment MatchesFragment on Thumb {
     matches {
       id ${fields.filter(it => personFields.includes(it)).join(' ')}
@@ -137,14 +134,14 @@ const MATCHES_FRAGMENT = (fields) => gql`
   }
 `;
 
-const CELEBRITIES_FRAGMENT = (fields) => gql`
+const CELEBRITIES_FRAGMENT = (fields) => `
   fragment CelebritiesFragment on Thumb {
     celebrities {
       id ${fields.filter(it => personFields.includes(it)).join(' ')}
     }
   }
 `;
-const LABELS_FRAGMENT = (fields) => gql`
+const LABELS_FRAGMENT = (fields) => `
   fragment LabelsFragment on Thumb {
     labels {
       id ${fields.filter(it => labelFields.includes(it)).join(' ')}
@@ -152,7 +149,7 @@ const LABELS_FRAGMENT = (fields) => gql`
   }
 `;
 
-const TEXTS_FRAGMENT = (fields) => gql`
+const TEXTS_FRAGMENT = (fields) => `
   fragment TextsFragment on Thumb {
     texts {
       id ${fields.filter(it => textFields.includes(it)).join(' ')}
@@ -163,7 +160,7 @@ const TEXTS_FRAGMENT = (fields) => gql`
 function makeThumbsQuery(fields) {
   const usesFaces = fields.find(it => it.toLowerCase().includes('face'));
 
-  return print(gql`
+  return `
     query thumbs($where: ThumbWhereInput, $skip: Int, $first: Int) {
       thumbs(where: $where, skip: $skip, first: $first, orderBy: start_ASC) {
         id
@@ -201,7 +198,7 @@ function makeThumbsQuery(fields) {
     ${fields.includes('celebrities') ? CELEBRITIES_FRAGMENT(fields) : ''}
     ${fields.includes('labels') ? LABELS_FRAGMENT(fields) : ''}
     ${fields.includes('texts') ? TEXTS_FRAGMENT(fields) : ''}
-  `);
+  `;
 };
 
 const THUMBS_CONNECTION = `
