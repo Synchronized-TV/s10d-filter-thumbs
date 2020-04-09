@@ -100,7 +100,7 @@ function convert(variables) {
   }, {});
 }
 
-function filter(args, items) {
+function filter(args, items = []) {
   const { where } = args;
   return Object.keys(where).length === 0 ? items : items.filter(item => mongo.test(item, convert(where)));
 }
