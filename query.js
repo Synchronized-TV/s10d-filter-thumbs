@@ -19,8 +19,8 @@ const thumbFields = [
   'texts'
 ];
 
-async function query(request, videoId, args, length = 500) {
-  const { aggregate: { count } } = await request(THUMBS_CONNECTION, {
+async function query(request, videoId, args, fields, length = 500) {
+  const { thumbsConnection: { aggregate: { count } } } = await request(THUMBS_CONNECTION, {
     where: {
       video: {
         id: videoId
@@ -29,7 +29,7 @@ async function query(request, videoId, args, length = 500) {
   });
 
   const JSONArgs = JSON.stringify(args);
-  const filteredFields = thumbFields.filter(thumbField => JSONArgs.includes(thumbField));
+  const filteredFields = thumbFields.filter(thumbField => JSONArgs.includes(thumbField)).concat(fields);
 
   const chunks = await Promise.all(Array.from({ length: Math.ceil(count / length) }).map((_, i) => {
     return request(makeThumbsQuery(filteredFields), {
@@ -43,7 +43,7 @@ async function query(request, videoId, args, length = 500) {
     })
   }));
 
-  return chunks.reduce((acc, thumbs) => [...acc, ...thumbs], []);
+  return chunks.reduce((acc, { thumbs }) => [...acc, ...thumbs], []);
 }
 
 module.exports = query;
