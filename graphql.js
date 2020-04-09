@@ -134,9 +134,8 @@ function makeThumbsQuery(fields) {
   return print(gql`
     query thumbs($where: ThumbWhereInput, $skip: Int, $first: Int) {
       thumbs(where: $where, skip: $skip, first: $first, orderBy: start_ASC) {
-        __typename
         id
-        url
+        ${fields.includes('url') ? 'url' : ''}
         ${fields.includes('start') ? 'start' : ''}
         ${fields.includes('end') ? 'end' : ''}
         ${fields.includes('quality') ? 'quality' : ''}
