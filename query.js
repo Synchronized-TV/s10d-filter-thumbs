@@ -1,5 +1,6 @@
 
 const { makeThumbsQuery, THUMBS_CONNECTION } = require('./graphql');
+const { CUE, VIDEO } = require('./graphql');
 
 const thumbFields = [
   'start',
@@ -19,11 +20,48 @@ const thumbFields = [
   'texts'
 ];
 
-async function query(request, videoId, args, fields, length = 500) {
+async function getStartEndFromChapterIdOrVideoId({ request, ...args }) {
+  if (args.chapterId) {
+    const {
+      cue: { start, end, video }
+    } = await request(CUE, { id: args.chapterId });
+
+    const {
+      chapterStartInc = 0,
+      chapterEndInc = 0
+    } = video.project.thumbsPresets.find(it => video.title.match(new RegExp(it.videosPath))
+    );
+
+    return { video, start: start + chapterStartInc, end: end - chapterEndInc };
+  }
+  if (args.videoId) {
+    const { video } = await request(VIDEO, { id: args.videoId });
+
+    const {
+      videoStartInc = 0,
+      videoEndInc = 0
+    } = video.project.thumbsPresets.find(it => video.title.match(new RegExp(it.videosPath))
+    );
+
+    return {
+      video,
+      start: 0 + videoStartInc,
+      end: video.duration - videoEndInc
+    };
+  }
+
+  throw new Error('No video or chapter id');
+}
+
+async function query({ request, videoId, chapterId, args, fields, length = 500 }) {
+  const { video, start, end } = await getStartEndFromChapterIdOrVideoId({
+    request, videoId, chapterId
+  });
+
   const { thumbsConnection: { aggregate: { count } } } = await request(THUMBS_CONNECTION, {
     where: {
       video: {
-        id: videoId
+        id: video.id
       }
     }
   });
@@ -36,8 +74,10 @@ async function query(request, videoId, args, fields, length = 500) {
       skip: i * length,
       first: length,
       where: {
+        start_gte: start,
+        start_lt: end,  
         video: {
-          id: videoId
+          id: video.id
         }
       }
     })

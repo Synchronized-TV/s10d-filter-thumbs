@@ -138,7 +138,7 @@ function makeThumbsQuery(fields) {
         id
         url
         ${fields.includes('start') ? 'start' : ''}
-        ${fields.includes('diff') ? 'notFound' : ''}
+        ${fields.includes('end') ? 'end' : ''}
         ${fields.includes('quality') ? 'quality' : ''}
         ${fields.includes('brightness') ? 'brightness' : ''}
         ${fields.includes('sharpness') ? 'sharpness' : ''}
@@ -186,7 +186,26 @@ const THUMBS_CONNECTION = `
     }
   }`;
 
+  
+const VIDEO = `
+  query video($id: UUID!) {
+    video(where: { id: $id }) {
+      id
+      duration
+      project { thumbsPresets { videosPath videoStartInc videoEndInc } }
+    }
+  }`;
+
+const CUE = `
+  query cue($id: UUID!) {
+    cue(where: { id: $id }) {
+      start end video { id project { thumbsPresets { videosPath videoStartInc videoEndInc } } }
+    }
+  }`;
+
 module.exports = {
   makeThumbsQuery,
-  THUMBS_CONNECTION
+  THUMBS_CONNECTION,
+  VIDEO,
+  CUE
 };

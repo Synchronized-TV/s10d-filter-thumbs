@@ -2,9 +2,10 @@ const filter = require('./filter');
 const query = require('./query');
 const sort = require('./sort');
 
-async function getThumbs({ request, videoId, args, fields = [], diff }) {
+async function getThumbs({ request, videoId, chapterId, args, fields = [], diff }) {
+  console.log(videoId);
   console.time('query');
-  const items = await query(request, videoId, args, fields);
+  const items = await query({ request, videoId, chapterId, args, fields });
   console.timeEnd('query');
   console.time('filter');
   const filteredItems = filter(args, items);

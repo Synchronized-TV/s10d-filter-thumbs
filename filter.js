@@ -102,6 +102,11 @@ function convert(variables) {
 
 function filter(args, items = []) {
   const { where } = args;
+
+  if (!items || !items.length) {
+    return [];
+  }
+
   return Object.keys(where).length === 0 ? items : items.filter(item => mongo.test(item, convert(where)));
 }
 

@@ -91,8 +91,8 @@ function getAverageScore(thumb, sort) {
   );
 }
 
-function sortThumbs(thumbs, sort) {
-  if (!sort) {
+function sortThumbs(thumbs = [], sort) {
+  if (!sort || !thumbs.length) {
     return thumbs;
   }
 
