@@ -1,0 +1,18 @@
+{
+  "name": "s10d-filter-thumbs",
+  "version": "1.0.0",
+  "devDependencies": {
+    "eslint": "^5.12.1"
+  },
+  "dependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/register": "^7.9.0",
+    "graphql": "^15.0.0",
+    "graphql-tag": "^2.10.3",
+    "json-criteria": "^2.6.0",
+    "jsonpath": "atlasgurus/jsonpath",
+    "lodash.sortby": "^4.7.0",
+    "moize": "^5.4.4"
+  }
+}
