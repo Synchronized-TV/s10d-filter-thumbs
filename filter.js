@@ -101,13 +101,17 @@ function convert(variables) {
 }
 
 function filter(args, items = []) {
-  const { where } = args;
-
   if (!items || !items.length) {
     return [];
   }
 
-  return Object.keys(where).length === 0 ? items : items.filter(item => mongo.test(item, convert(where)));
+  if (Object.keys(args.where).length === 0) {
+    return items;
+  }
+
+  const convertedWhere = convert(args.where);
+
+  return items.filter(item => mongo.test(item, convertedWhere));
 }
 
 module.exports = filter;
