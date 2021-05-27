@@ -1,6 +1,3 @@
-require('@babel/register');
-require('@babel/polyfill');
-
 const { mongo } = require('json-criteria');
 
 const conditions = {
@@ -26,6 +23,18 @@ const conditions = {
     } catch (e) {
       return false;
     }
+  },
+
+  $contains(d, q) {
+    return d.includes(q);
+  },
+
+  $starts_with(d, q) {
+    return d.startsWith(q);
+  },
+
+  $ends_with(d, q) {
+    return d.endsWith(q);
   }
 };
 
@@ -34,7 +43,7 @@ mongo.registry.conditions = mongo.registry.conditions.concat(Object.entries(cond
 function transform(part, value) {
   const [name, ...rest] = part.split('_');
   const op = part.includes('_') ? rest.join('_') : part;
-
+// console.log(op);
   switch (op) {
     case 'NOT':
       return ['$not', value];
@@ -49,6 +58,9 @@ function transform(part, value) {
     case 'some':
     case 'every':
     case 'none':
+    case 'contains':
+    case 'starts_with':
+    case 'ends_with':
       return [name, { [`$${op}`]: value }];
     case 'in':
       return [name, { '$in': [].concat(value) }];
@@ -105,7 +117,7 @@ function filter(args, items = []) {
     return [];
   }
 
-  if (Object.keys(args.where).length === 0) {
+  if (!args.where || Object.keys(args.where).length === 0) {
     return items;
   }
 

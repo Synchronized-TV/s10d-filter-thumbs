@@ -1,5 +1,5 @@
 const sortBy = require('lodash.sortby');
-const jsonpath = require('jsonpath');
+const jsonpath = require('jsonpath-faster');
 const moize = require('moize').default;
 
 const getOccurences = moize((arr, key, fieldName) => {
@@ -98,7 +98,7 @@ function sortThumbs(thumbs = [], sort) {
 
   const thumbsWithScore = injectScores(
     // Wrap jsonpath obj to work with objects having weird prototype.
-    thumbs.map(thumb => JSON.parse(JSON.stringify(thumb))),
+    thumbs, // .map(thumb => JSON.parse(JSON.stringify(thumb))),
     sort
   );
 

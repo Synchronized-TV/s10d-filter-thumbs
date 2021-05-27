@@ -2,19 +2,15 @@
   "name": "s10d-filter-thumbs",
   "version": "1.0.0",
   "devDependencies": {
-    "eslint": "^6.3.0",
-    "eslint-config-airbnb": "^18.0.1",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-prettier": "^6.1.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-prettier": "^3.1.0"
+    "@synchronized/eslint-config-s10d": "Synchronized-TV/eslint-config-s10d",
+    "@synchronized/prettier-config": "Synchronized-TV/prettier-config",
+    "eslint": "^7.19.0",
+    "prettier": "^2.2.1"
   },
   "dependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/polyfill": "^7.8.7",
-    "@babel/register": "^7.9.0",
     "json-criteria": "^2.6.0",
     "jsonpath": "atlasgurus/jsonpath",
+    "jsonpath-faster": "^0.0.12",
     "lodash.sortby": "^4.7.0",
     "moize": "^5.4.4"
   }
