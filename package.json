@@ -1,17 +1,27 @@
 {
   "name": "s10d-filter-thumbs",
   "version": "1.0.0",
+  "license": "UNLICENSED",
+  "main": "index.js",
+  "author": "s10d",
+  "prettier": "@synchronized/prettier-config",
+  "dependencies": {
+    "core-js": "^3.13.1",
+    "json-criteria": "^2.6.0",
+    "jsonpath-faster": "^0.0.12",
+    "lodash.sortby": "^4.7.0",
+    "moize": "^5.4.4",
+    "regenerator-runtime": "^0.13.7"
+  },
   "devDependencies": {
     "@synchronized/eslint-config-s10d": "Synchronized-TV/eslint-config-s10d",
     "@synchronized/prettier-config": "Synchronized-TV/prettier-config",
     "eslint": "^7.19.0",
+    "jest": "^27.0.4",
     "prettier": "^2.2.1"
   },
-  "dependencies": {
-    "json-criteria": "^2.6.0",
-    "jsonpath": "atlasgurus/jsonpath",
-    "jsonpath-faster": "^0.0.12",
-    "lodash.sortby": "^4.7.0",
-    "moize": "^5.4.4"
+  "scripts": {
+    "test": "LOG_LEVEL=none jest --roots __tests__/unit",
+    "test:watch": "LOG_LEVEL=debug jest --watch --roots ."
   }
 }

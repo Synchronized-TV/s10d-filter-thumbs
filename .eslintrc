@@ -1,14 +1,3 @@
 {
-  "env": {
-    "es6": true,
-    "node": true
-  },
-  "extends": ["airbnb-base", "prettier"],
-  "rules": {
-    "no-restricted-syntax": "off",
-    "no-await-in-loop": "off",
-    "no-continue": "off",
-    "no-lonely-if": "off",
-    "prefer-spread": "off"
-  }
+  "extends": ["@synchronized/eslint-config-s10d"]
 }

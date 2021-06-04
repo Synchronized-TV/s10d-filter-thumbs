@@ -16,17 +16,17 @@ const getOccurences = moize((arr, key, fieldName) => {
   }, {});
 });
 
-function injectScores(thumbs, sort) {
-  const thumbsWithOccurences = thumbs.map(thumb => ({
-    ...thumb,
-    ...Object.keys(thumb)
-      .filter(key => Array.isArray(thumb[key]))
+function injectScores(items, sort) {
+  const itemsWithOccurences = items.map(item => ({
+    ...item,
+    ...Object.keys(item)
+      .filter(key => Array.isArray(item[key]))
       .reduce((acc, key) => {
-        const occurences = getOccurences(thumbs, key, 'name');
+        const occurences = getOccurences(items, key, 'name');
 
         return {
           ...acc,
-          [key]: thumb[key].map(it => ({
+          [key]: item[key].map(it => ({
             ...it,
             occurences: occurences[it.name]
           }))
@@ -34,12 +34,12 @@ function injectScores(thumbs, sort) {
       }, {})
   }));
 
-  const thumbsWithRawScore = thumbsWithOccurences.map(thumb => ({
-    ...thumb,
+  const itemsWithRawScore = itemsWithOccurences.map(item => ({
+    ...item,
     ...sort.reduce((acc, { path, center }) => {
       const values = []
-        .concat(jsonpath.query(thumb, path))
-        .map(it => center !== undefined ? Math.abs(it - center) : it);
+        .concat(jsonpath.query(item, path))
+        .map(it => (center !== undefined ? Math.abs(it - center) : it));
 
       const rawScore = values.reduce(
         (a, b) => a + (Number.isNaN(b) ? 0 : b),
@@ -56,16 +56,16 @@ function injectScores(thumbs, sort) {
     }, {})
   }));
 
-  const thumbsWithScore = thumbsWithRawScore.map(thumb => ({
-    ...thumb,
+  const itemsWithScore = itemsWithRawScore.map(item => ({
+    ...item,
     ...sort.reduce((acc, { path }) => {
-      const rawScore = thumbsWithRawScore
+      const rawScore = itemsWithRawScore
         .map(it => it.rawScore[path])
         .filter(it => !Number.isNaN(it));
       const minRawScore = Math.min.apply(null, rawScore);
       const maxRawScore = Math.max.apply(null, rawScore);
       const max = maxRawScore - minRawScore;
-      const score = (thumb.rawScore[path] - minRawScore) / max;
+      const score = (item.rawScore[path] - minRawScore) / max;
 
       return {
         ...acc,
@@ -77,13 +77,13 @@ function injectScores(thumbs, sort) {
     }, {})
   }));
 
-  return thumbsWithScore;
+  return itemsWithScore;
 }
 
-function getAverageScore(thumb, sort) {
+function getAverageScore(item, sort) {
   return (
     sort.reduce((acc, { path, direction = 'DESC', weight = 1, negative }) => {
-      const value = thumb.score[path];
+      const value = item.score[path];
       const finalValue = negative ? 0 - value : value;
 
       return acc + (direction === 'ASC' ? 1 - finalValue : finalValue) * weight;
@@ -91,27 +91,29 @@ function getAverageScore(thumb, sort) {
   );
 }
 
-function sortThumbs(thumbs = [], sort) {
-  if (!sort || !thumbs.length) {
-    return thumbs;
+function sortItems(sort, items = []) {
+  if (!items || !items.length) {
+    return [];
   }
 
-  const thumbsWithScore = injectScores(
-    // Wrap jsonpath obj to work with objects having weird prototype.
-    thumbs, // .map(thumb => JSON.parse(JSON.stringify(thumb))),
-    sort
-  );
+  if (!sort) {
+    return items;
+  }
+
+  const itemsWithScore = injectScores(items, sort);
 
   return sortBy(
-    thumbsWithScore.map(thumb => ({
-      ...thumb,
+    itemsWithScore.map(item => ({
+      ...item,
       score: {
-        ...thumb.score,
-        average: getAverageScore(thumb, sort)
+        ...item.score,
+        average: getAverageScore(item, sort)
       }
     })),
     it => it.score.average
-  ).reverse();
+  )
+    .reverse()
+    .map(({ score, rawScore, ...it }) => it);
 }
 
-module.exports = sortThumbs;
+module.exports = sortItems;

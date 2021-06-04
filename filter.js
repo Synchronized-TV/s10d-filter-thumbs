@@ -1,9 +1,12 @@
+require('core-js/stable');
+require('regenerator-runtime/runtime');
+
 const { mongo } = require('json-criteria');
 
 const conditions = {
-  $every (d, q) {
+  $every(d, q) {
     try {
-      return Array.isArray(d) && d.every((e) => this.test(e, q));
+      return Array.isArray(d) && d.every(e => this.test(e, q));
     } catch (e) {
       return false;
     }
@@ -11,7 +14,7 @@ const conditions = {
 
   $none(d, q) {
     try {
-      return Array.isArray(d) && d.every((e) => !this.test(e, q));
+      return Array.isArray(d) && d.every(e => !this.test(e, q));
     } catch (e) {
       return false;
     }
@@ -19,7 +22,7 @@ const conditions = {
 
   $some(d, q) {
     try {
-      return Array.isArray(d) && d.some((e) => this.test(e, q));
+      return Array.isArray(d) && d.some(e => this.test(e, q));
     } catch (e) {
       return false;
     }
@@ -38,12 +41,14 @@ const conditions = {
   }
 };
 
-mongo.registry.conditions = mongo.registry.conditions.concat(Object.entries(conditions));
+mongo.registry.conditions = mongo.registry.conditions.concat(
+  Object.entries(conditions)
+);
 
 function transform(part, value) {
   const [name, ...rest] = part.split('_');
   const op = part.includes('_') ? rest.join('_') : part;
-// console.log(op);
+  // console.log(op);
   switch (op) {
     case 'NOT':
       return ['$not', value];
@@ -63,11 +68,11 @@ function transform(part, value) {
     case 'ends_with':
       return [name, { [`$${op}`]: value }];
     case 'in':
-      return [name, { '$in': [].concat(value) }];
+      return [name, { $in: [].concat(value) }];
     case 'not':
-      return [name, { '$ne': value }];
+      return [name, { $ne: value }];
     case 'not_in':
-      return [name, { '$nin': [].concat(value) }];
+      return [name, { $nin: [].concat(value) }];
     default:
       return [part, value];
   }
@@ -78,52 +83,59 @@ function convert(variables) {
     return variables.map(convert);
   }
 
-  if (typeof variables !== 'object' || variables === undefined || variables === null) {
+  if (
+    typeof variables !== 'object' ||
+    variables === undefined ||
+    variables === null
+  ) {
     return variables;
   }
 
-  return Object.entries(variables).map(([key, value]) => {
-    return transform(key, convert(value));
-  }).reduce((acc, [key, value]) => {
-    if (Array.isArray(value)) {
+  return Object.entries(variables)
+    .map(([key, value]) => transform(key, convert(value)))
+    .reduce((acc, [key, value]) => {
+      if (Array.isArray(value)) {
+        return {
+          ...acc,
+          [key]: [...(acc[key] || []), ...value]
+        };
+      }
+
+      if (typeof value === 'object' && value !== null) {
+        return {
+          ...acc,
+          [key]: {
+            ...(acc[key] || {}),
+            ...value
+          }
+        };
+      }
+
       return {
         ...acc,
-        [key]: [
-          ...acc[key] || [],
-          ...value
-        ]
-      }
-    }
-
-    if (typeof value === 'object' && value !== null) {
-      return {
-        ...acc,
-        [key]: {
-          ...acc[key] || {},
-          ...value
-        }
-      }
-    }
-
-    return {
-      ...acc,
-      [key]: value
-    }
-  }, {});
+        [key]: value
+      };
+    }, {});
 }
 
-function filter(args, items = []) {
+function filter(where, items = []) {
   if (!items || !items.length) {
     return [];
   }
 
-  if (!args.where || Object.keys(args.where).length === 0) {
+  if (!where || Object.keys(where).length === 0) {
     return items;
   }
 
-  const convertedWhere = convert(args.where);
+  const convertedWhere = convert(where);
 
-  return items.filter(item => mongo.test(item, convertedWhere));
+  return items.filter(item => {
+    try {
+      return mongo.test(item, convertedWhere);
+    } catch (e) {
+      return false;
+    }
+  });
 }
 
 module.exports = filter;

@@ -1,10 +1,10 @@
 const filter = require('./filter');
 const sort = require('./sort');
 
-function getThumbs({ thumbs, args = { start: 0 } }) {
-  const filteredItems = filter(args, thumbs);
-  const sortedFilteredItems = sort(filteredItems, args.sort);
-  return sortedFilteredItems.slice(args.start, args.sortLimit);
+function filterThumbs({ thumbs, args = { start: 0, sortLimit: 100 } }) {
+  const filtered = filter(args.where, thumbs);
+  const sortedFiltered = sort(args.sort, filtered);
+  return sortedFiltered.slice(args.start, args.sortLimit);
 }
 
-module.exports = getThumbs;
+module.exports = filterThumbs;
