@@ -82,11 +82,10 @@ function injectScores(items, sort) {
 
 function getAverageScore(item, sort) {
   return (
-    sort.reduce((acc, { path, direction = 'DESC', weight = 1, negative }) => {
+    sort.reduce((acc, { path, direction = 'DESC', weight = 1 }) => {
       const value = item.score[path];
-      const finalValue = negative ? 0 - value : value;
 
-      return acc + (direction === 'ASC' ? 1 - finalValue : finalValue) * weight;
+      return acc + (direction === 'ASC' ? 1 - value : value) * weight;
     }, 0) / sort.reduce((acc, { weight = 1 }) => acc + weight, 0)
   );
 }

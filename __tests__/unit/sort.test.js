@@ -1,4 +1,4 @@
-const sort = require('../../sort');
+const sort = require('../../src/sort');
 
 describe('sort', () => {
   it('should return empty array if no items', async () => {

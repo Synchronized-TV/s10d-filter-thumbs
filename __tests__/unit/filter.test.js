@@ -1,4 +1,4 @@
-const filter = require('../../filter');
+const filter = require('../../src/filter');
 
 describe('filter', () => {
   it('should return empty array if no items', async () => {

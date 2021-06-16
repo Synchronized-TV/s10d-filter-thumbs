@@ -1,8 +1,11 @@
 {
-  "name": "s10d-filter-thumbs",
+  "name": "@synchronized/s10d-filter-thumbs",
   "version": "1.0.0",
   "license": "UNLICENSED",
-  "main": "index.js",
+  "files": [
+    "src/"
+  ],
+  "main": "src/index.js",
   "author": "s10d",
   "prettier": "@synchronized/prettier-config",
   "dependencies": {
@@ -16,8 +19,8 @@
   "devDependencies": {
     "@synchronized/eslint-config-s10d": "Synchronized-TV/eslint-config-s10d",
     "@synchronized/prettier-config": "Synchronized-TV/prettier-config",
-    "eslint": "^7.19.0",
-    "jest": "^27.0.4",
+    "eslint": "^7.26.0",
+    "jest": "^26.6.3",
     "prettier": "^2.2.1"
   },
   "scripts": {
